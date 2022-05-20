@@ -22,6 +22,7 @@
   "author": "Alfonso Andrés López Molina",
   "license": "MIT",
   "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
     "eslint": "^8.15.0",
@@ -33,6 +34,7 @@
     "vite": "^2.9.9"
   },
   "dependencies": {
+    "lodash-es": "^4.17.21",
     "phaser": "^3.55.2"
   }
 }
