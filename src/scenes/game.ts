@@ -1,18 +1,17 @@
 import { Scene } from 'phaser';
-import CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys;
 import { Config } from '../config';
 import { Bomberman } from '../characters/bomberman';
 import { Bombs } from '../characters/collections/bombs';
 import { TileMap } from '../core/map/tile-map';
+import { keyboardConnection } from '../core/input/keyboard-connection';
 
 const frameWidth = 16;
 const frameHeight = 16;
 
 export class GameScene extends Scene {
-  private cursors!: CursorKeys;
   private bomberman!: Bomberman;
   private bombs!: Bombs;
-  private tileMap!: TileMap;
+  tileMap!: TileMap;
 
   constructor() {
     super('GameScene');
@@ -47,8 +46,6 @@ export class GameScene extends Scene {
   }
 
   create() {
-    this.cursors = this.input.keyboard.createCursorKeys();
-
     this.tileMap = new TileMap(this);
     this.tileMap.reset();
 
@@ -85,18 +82,13 @@ export class GameScene extends Scene {
     );
 
     this.cameras.main.startFollow(this.bomberman.sprite, true);
+
+    keyboardConnection(this.input.keyboard, this.bomberman as any);
   }
 
   update(time: number, delta: number) {
     super.update(time, delta);
-    this.bomberman.update(
-      time,
-      delta,
-      this.cursors,
-      this.input,
-      this.physics,
-      this.tileMap,
-    );
+    this.bomberman.update(time, delta, this.physics, this.tileMap);
     this.tileMap.update(time, delta);
   }
 }

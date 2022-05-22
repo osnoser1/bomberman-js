@@ -1,14 +1,11 @@
 import { Player } from '../core/player/player';
-import {
-  RandomMovement,
-  RandomMovementType,
-} from '../movement/random-movement';
+import { RandomMovement } from '../movement/random-movement';
 import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
-const frameRate = 8;
+const frameRate = 5;
 
-export class Enemy extends Player {
-  constructor(
+export abstract class Enemy extends Player {
+  protected constructor(
     name: string,
     sprite: SpriteWithDynamicBody,
     tileX: number,
@@ -31,9 +28,8 @@ export class Enemy extends Player {
       frameRate,
     );
 
+    this.movement = new RandomMovement(this);
     this.sprite.setDepth(1);
     this.sprite.setBounce(1, 1);
-    this.movementType = RandomMovementType.High;
-    this.movement = new RandomMovement(this);
   }
 }

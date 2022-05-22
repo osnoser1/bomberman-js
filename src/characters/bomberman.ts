@@ -1,10 +1,12 @@
 import { GameScene } from '../scenes/game';
 import { Bombs } from './collections/bombs';
 import { getMapTilePosition } from '../utils/map';
-import { Player } from '../core/player/player';
+import { Player, Speed } from '../core/player/player';
 import { TileMap } from '../core/map/tile-map';
+import { Input } from '../core/input/gamepad';
+import Buttons = Input.Buttons;
 
-const frameRate = 8;
+const frameRate = 6;
 
 // @ts-ignore
 enum BombermanState {
@@ -15,8 +17,6 @@ enum BombermanState {
 }
 
 export class Bomberman extends Player {
-  readonly speed = 240;
-
   constructor(
     scene: GameScene,
     public bombs: Bombs,
@@ -41,55 +41,16 @@ export class Bomberman extends Player {
       frameRate,
     );
 
+    this.speed = Speed.Mid;
     this.sprite.setDepth(1);
   }
 
-  update(
-    _time: number,
-    _delta: number,
-    cursors: Phaser.Types.Input.Keyboard.CursorKeys,
-    input: Phaser.Input.InputPlugin,
+  #updateActions(
     physics: Phaser.Physics.Arcade.ArcadePhysics,
     tileMap: TileMap,
   ) {
-    if (cursors.right.isDown) {
-      this.sprite.anims.play('right', true);
-    } else if (cursors.left.isDown) {
-      this.sprite.anims.play('left', true);
-    } else if (cursors.up.isDown) {
-      this.sprite.anims.play('up', true);
-    } else if (cursors.down.isDown) {
-      this.sprite.anims.play('down', true);
-    }
-
     if (
-      !cursors.right.isDown &&
-      !cursors.left.isDown &&
-      !cursors.up.isDown &&
-      !cursors.down.isDown
-    ) {
-      this.sprite.anims.pause();
-    }
-
-    if (cursors.up.isDown) {
-      this.sprite.setVelocityY(-this.speed);
-    } else if (cursors.down.isDown) {
-      this.sprite.setVelocityY(this.speed);
-    } else {
-      this.sprite.setVelocityY(0);
-    }
-
-    if (cursors.right.isDown) {
-      this.sprite.setVelocityX(this.speed);
-    } else if (cursors.left.isDown) {
-      this.sprite.setVelocityX(-this.speed);
-    } else {
-      this.sprite.setVelocityX(0);
-    }
-
-    const bombKey = input.keyboard.addKey('C');
-    if (
-      input.keyboard.checkDown(bombKey) &&
+      this.gamepad.isPressed(Buttons.A) &&
       !physics.overlap(this.sprite, this.bombs.group) &&
       !physics.overlap(this.sprite, tileMap.bricks.group)
     ) {
@@ -97,5 +58,16 @@ export class Bomberman extends Player {
       const { x: tileX, y: tileY } = getMapTilePosition(center.x, center.y);
       this.bombs.addBomb(tileX, tileY);
     }
+  }
+
+  // @ts-ignore
+  update(
+    _time: number,
+    _delta: number,
+    physics: Phaser.Physics.Arcade.ArcadePhysics,
+    tileMap: TileMap,
+  ) {
+    super.update(_time, _delta);
+    this.#updateActions(physics, tileMap);
   }
 }

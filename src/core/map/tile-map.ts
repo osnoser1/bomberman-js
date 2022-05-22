@@ -39,5 +39,7 @@ export class TileMap {
     this.enemies.generateRandom(this.#map);
   }
 
-  update(_time: number, _delta: number) {}
+  update(_time: number, _delta: number) {
+    this.enemies.update(_time, _delta);
+  }
 }

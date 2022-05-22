@@ -1,5 +1,8 @@
 import { Player } from '../core/player/player';
 import { random } from 'lodash-es';
+import { Input } from '../core/input/gamepad';
+import Buttons = Input.Buttons;
+import Gamepad = Input.Gamepad;
 
 export enum RandomMovementType {
   Low,
@@ -17,23 +20,28 @@ enum Movement {
 
 export class RandomMovement {
   readonly #player: Player;
+  readonly #gamepad: Gamepad;
+  #buttons: Buttons[] = [];
   #intervalId?: number;
 
   constructor(player: Player) {
     this.#player = player;
+    this.#gamepad = this.#player.gamepad;
     if (this.#player.movementType === RandomMovementType.Impossible) {
       throw new Error(`Impossible movement type hasn't been implemented`);
     }
   }
 
   start() {
-    this.#intervalId = setInterval(() => {
+    const func = () => {
       if (this.#player.movementType === RandomMovementType.Low) {
         this.makeMovement(random(0, 3));
       } else {
         this.makeMovement(random(0, 1), random(2, 3));
       }
-    }, 2000);
+    };
+    func();
+    this.#intervalId = setInterval(func, 3000);
   }
 
   stop() {
@@ -41,20 +49,21 @@ export class RandomMovement {
   }
 
   private makeMovement(first: Movement, second?: Movement) {
-    let x = 0;
-    let y = 0;
+    this.#gamepad.pressMany(false, this.#buttons, false);
+    this.#buttons = [];
+
     if (first === Movement.Left) {
-      x = -1;
+      this.#buttons.push(Buttons.Left);
     } else if (first === Movement.Right) {
-      x = 1;
+      this.#buttons.push(Buttons.Right);
     }
 
     if (first === Movement.Up || second === Movement.Up) {
-      y = -1;
+      this.#buttons.push(Buttons.Up);
     } else if (first === Movement.Down || second === Movement.Down) {
-      y = 1;
+      this.#buttons.push(Buttons.Down);
     }
 
-    this.#player.sprite.setVelocity(x * 32, y * 32);
+    this.#gamepad.pressMany(true, this.#buttons);
   }
 }
