@@ -4,6 +4,7 @@ import { Bomberman } from '../characters/bomberman';
 import { Bombs } from '../characters/collections/bombs';
 import { TileMap } from '../core/map/tile-map';
 import { keyboardConnection } from '../core/input/keyboard-connection';
+import { joystickConnection } from '../core/input/joystick';
 
 const frameWidth = 16;
 const frameHeight = 16;
@@ -84,6 +85,7 @@ export class GameScene extends Scene {
     this.cameras.main.startFollow(this.bomberman.sprite, true);
 
     keyboardConnection(this.input.keyboard, this.bomberman as any);
+    joystickConnection(this.bomberman as any);
   }
 
   update(time: number, delta: number) {

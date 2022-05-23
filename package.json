@@ -30,11 +30,13 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "prettier": "2.6.2",
+    "sass": "^1.52.1",
     "typescript": "^4.6.4",
     "vite": "^2.9.9"
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
+    "nipplejs": "^0.9.1",
     "phaser": "^3.55.2"
   }
 }
