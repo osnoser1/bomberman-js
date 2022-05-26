@@ -4,9 +4,12 @@ import { Player } from '../player/player';
 import { Input } from './gamepad';
 import Buttons = Input.Buttons;
 
-export function joystickConnection(player: Player) {
-  const manager = nipplejs.create();
+function configJoyStick(player: Player) {
   const gamepad = player.gamepad;
+  const manager = nipplejs.create({
+    mode: 'static',
+    position: { left: '100px', bottom: '100px' },
+  });
 
   manager.on('end', () => {
     gamepad.pressMany(false, [
@@ -52,4 +55,45 @@ export function joystickConnection(player: Player) {
     gamepad.pressMany(true, pressedButtons);
     gamepad.pressMany(false, unpressedButtons);
   });
+}
+
+function configButtons(player: Player) {
+  const gamepad = player.gamepad;
+  const body = document.querySelector('body')!;
+  const btn = document.createElement('div');
+  const img = document.createElement('img');
+
+  img.src = 'assets/joystick/bomb-btn.png';
+  btn.appendChild(img);
+
+  Object.assign(btn.style, {
+    bottom: '50px',
+    display: 'flex',
+    opacity: '0.5',
+    position: 'absolute',
+    right: '50px',
+    transition: 'opacity 250ms ease 0s',
+  } as CSSStyleDeclaration);
+  Object.assign(img.style, {
+    width: '100px',
+    pointerEvents: 'none',
+    userSelect: 'none',
+  } as CSSStyleDeclaration);
+
+  body.appendChild(btn);
+
+  const bombActionCallbackEvent = (ev: Event) => {
+    ev.stopPropagation();
+    const isPointerDownEvt = ev.type === 'pointerdown';
+    btn.style.opacity = isPointerDownEvt ? '0.8' : '0.5';
+    gamepad.press(Buttons.A, isPointerDownEvt);
+  };
+
+  btn.addEventListener('pointerdown', bombActionCallbackEvent);
+  btn.addEventListener('pointerup', bombActionCallbackEvent);
+}
+
+export function joystickConnection(player: Player) {
+  configJoyStick(player);
+  configButtons(player);
 }
