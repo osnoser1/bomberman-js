@@ -22,8 +22,8 @@ export namespace Input {
       [Buttons.None]: new ButtonState(true, true),
     };
 
-    isPressed(button: Buttons) {
-      return this.#buttons[button].isPressed();
+    isPressed(...buttons: Buttons[]) {
+      return buttons.some(b => this.#buttons[b].isPressed());
     }
 
     press(button: Buttons, pressed: boolean, emit = true) {

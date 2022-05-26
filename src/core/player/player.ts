@@ -8,6 +8,8 @@ import {
   RandomMovementType,
 } from '../../movement/random-movement';
 import { Input } from '../input/gamepad';
+import { getMapTilePosition } from '../../utils/map';
+import { isEven } from '../../utils/math';
 
 export enum Speed {
   Slowest = 1,
@@ -15,6 +17,16 @@ export enum Speed {
   Mid = 4,
   Fast,
 }
+
+const AxisToButton = {
+  x: [Buttons.Left, Buttons.Right],
+  y: [Buttons.Up, Buttons.Down],
+};
+
+const AxisToDimension = {
+  x: 'width',
+  y: 'height',
+} as const;
 
 export abstract class Player {
   movementType?: RandomMovementType;
@@ -35,8 +47,8 @@ export abstract class Player {
     this.gamepad = new Gamepad();
     this.sprite.setOrigin(0, 0);
     this.sprite.setPosition(
-      tileX * Config.graphics.tileWidth,
-      tileY * Config.graphics.tileHeight,
+      tileX * Config.graphics.tile.width,
+      tileY * Config.graphics.tile.height,
     );
 
     this.sprite.setImmovable(immovable);
@@ -73,20 +85,51 @@ export abstract class Player {
   }
 
   #updateMovement() {
+    const velocity = this.speed * 30;
     if (this.gamepad.isPressed(Buttons.Up)) {
-      this.sprite.setVelocityY(-this.speed * 30);
+      this.sprite.setVelocityY(-velocity);
     } else if (this.gamepad.isPressed(Buttons.Down)) {
-      this.sprite.setVelocityY(this.speed * 30);
+      this.sprite.setVelocityY(velocity);
     } else {
       this.sprite.setVelocityY(0);
     }
 
     if (this.gamepad.isPressed(Buttons.Right)) {
-      this.sprite.setVelocityX(this.speed * 30);
+      this.sprite.setVelocityX(velocity);
     } else if (this.gamepad.isPressed(Buttons.Left)) {
-      this.sprite.setVelocityX(-this.speed * 30);
+      this.sprite.setVelocityX(-velocity);
     } else {
       this.sprite.setVelocityX(0);
+    }
+
+    if (this.gamepad.isPressed(Buttons.Right, Buttons.Left)) {
+      this.handleExtraMovement(velocity, 'y');
+    }
+
+    if (this.gamepad.isPressed(Buttons.Up, Buttons.Down)) {
+      this.handleExtraMovement(velocity, 'x');
+    }
+  }
+
+  private handleExtraMovement(velocity: number, axis: 'x' | 'y') {
+    if (this.gamepad.isPressed(...AxisToButton[axis])) {
+      return;
+    }
+
+    const center = this.sprite.getCenter();
+    const tileModule =
+      center[axis] % Config.graphics.tile[AxisToDimension[axis]];
+    const tilePosition = getMapTilePosition(center.x, center.y);
+    if (isEven(tilePosition[axis])) {
+      return;
+    }
+
+    if (tileModule >= 6 && tileModule < 20) {
+      this.sprite.body.velocity[axis] = velocity;
+    } else if (tileModule > 20 && tileModule < 34) {
+      this.sprite.body.velocity[axis] = -velocity;
+    } else {
+      this.sprite.body.velocity[axis] = 0;
     }
   }
 }

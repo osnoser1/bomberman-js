@@ -18,8 +18,8 @@ export class TileMap {
       data: this.#map.emptyMap,
       width: Config.graphics.sceneWidth,
       height: Config.graphics.sceneHeight,
-      tileWidth: Config.graphics.tileWidth,
-      tileHeight: Config.graphics.tileHeight,
+      tileWidth: Config.graphics.tile.width,
+      tileHeight: Config.graphics.tile.height,
     });
     const itemsTileSet = this.#tileMap.addTilesetImage(
       'items',

@@ -12,8 +12,10 @@ export const Config = {
     height: 520,
   },
   graphics: {
-    tileWidth: tileWidth,
-    tileHeight: tileHeight,
+    tile: {
+      width: tileWidth,
+      height: tileHeight,
+    },
     sceneWidth: Map.Columns * tileWidth,
     sceneHeight: Map.Rows * tileHeight,
   },
