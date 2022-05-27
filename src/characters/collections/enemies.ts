@@ -3,14 +3,13 @@ import { Map } from '../../core/map/map';
 import { resolveEnemy } from '../utils/enemy-factory';
 import '../';
 import { Player } from '../../core/player/player';
-import { Enemy } from '../enemy';
+import { Brick } from '../brick';
 
 export class Enemies {
-  #enemies: Enemy[] = [];
   group: Phaser.Physics.Arcade.Group;
 
   constructor(scene: GameScene) {
-    this.group = scene.physics.add.group({ defaultKey: 'brick' });
+    this.group = scene.physics.add.group({ defaultKey: Brick.name });
   }
 
   generateRandom(map: Map) {
@@ -18,12 +17,14 @@ export class Enemies {
     enemies.forEach(b => {
       const Enemy = resolveEnemy(b.type);
       const enemy = new Enemy(this.group, b.x, b.y) as Player;
-      this.#enemies.push(enemy);
-      enemy.movement?.start();
+      enemy.startMovement();
     });
   }
 
   update(_time: number, _delta: number) {
-    this.#enemies.forEach(enemy => enemy.update(_time, _delta));
+    this.group.children.each(entry => {
+      const player: Player = entry.getData('player');
+      player.update(_time, _delta);
+    });
   }
 }

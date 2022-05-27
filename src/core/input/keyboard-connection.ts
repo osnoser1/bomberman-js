@@ -33,4 +33,9 @@ export function keyboardConnection(
     keyObj.on('down', keyEvent(player, key));
     keyObj.on('up', keyEvent(player, key));
   });
+
+  return () =>
+    Object.entries(keys).forEach(([_, keyObj]) => {
+      keyObj.destroy();
+    });
 }

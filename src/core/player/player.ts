@@ -29,8 +29,8 @@ const AxisToDimension = {
 } as const;
 
 export abstract class Player {
+  protected movement?: RandomMovement;
   movementType?: RandomMovementType;
-  movement?: RandomMovement;
   gamepad: Gamepad;
   speed!: Speed;
 
@@ -39,12 +39,19 @@ export abstract class Player {
     public sprite: SpriteWithDynamicBody,
     tileX: number,
     tileY: number,
-    animations: { frames: number[]; row: number; key: string }[],
+    animations: {
+      frames: number[];
+      row: number;
+      key: string;
+      repeat?: number;
+    }[],
     numberOfSpriteColumns: number,
     frameRate: number,
     immovable = false,
   ) {
     this.gamepad = new Gamepad();
+    this.sprite.name = this.name;
+    this.sprite.setData('player', this);
     this.sprite.setOrigin(0, 0);
     this.sprite.setPosition(
       tileX * Config.graphics.tile.width,
@@ -70,7 +77,23 @@ export abstract class Player {
     this.#updateMovement();
   }
 
+  kill() {
+    this.sprite.anims.play('death');
+
+    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () =>
+      this.sprite.destroy(),
+    );
+  }
+
+  startMovement() {
+    this.movement?.start();
+  }
+
   #updateAnimation(gamepad: Gamepad) {
+    if (this.sprite.anims.getName() === 'death') {
+      return;
+    }
+
     if (gamepad.isPressed(Buttons.Right)) {
       this.sprite.anims.play('right', true);
     } else if (gamepad.isPressed(Buttons.Left)) {
@@ -85,6 +108,11 @@ export abstract class Player {
   }
 
   #updateMovement() {
+    if (this.sprite.anims.getName() === 'death') {
+      this.sprite.setVelocity(0, 0);
+      return;
+    }
+
     const velocity = this.speed * 30;
     if (this.gamepad.isPressed(Buttons.Up)) {
       this.sprite.setVelocityY(-velocity);
@@ -119,7 +147,7 @@ export abstract class Player {
     const center = this.sprite.getCenter();
     const tileModule =
       center[axis] % Config.graphics.tile[AxisToDimension[axis]];
-    const tilePosition = getMapTilePosition(center.x, center.y);
+    const tilePosition = getMapTilePosition(center);
     if (isEven(tilePosition[axis])) {
       return;
     }

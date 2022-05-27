@@ -11,16 +11,15 @@ function configJoyStick(player: Player) {
     position: { left: '100px', bottom: '100px' },
   });
 
-  manager.on('end', () => {
+  const endHandler = () => {
     gamepad.pressMany(false, [
       Buttons.Right,
       Buttons.Up,
       Buttons.Left,
       Buttons.Down,
     ]);
-  });
-
-  manager.on('move', (_: any, data: JoystickOutputData) => {
+  };
+  const moveHandler = (_: any, data: JoystickOutputData) => {
     const pressedButtons: Buttons[] = [];
     const unpressedButtons: Buttons[] = [];
     let buttons: Buttons[];
@@ -54,7 +53,15 @@ function configJoyStick(player: Player) {
 
     gamepad.pressMany(true, pressedButtons);
     gamepad.pressMany(false, unpressedButtons);
-  });
+  };
+
+  manager.on('end', endHandler);
+  manager.on('move', moveHandler);
+
+  return () => {
+    manager.off('end', endHandler);
+    manager.off('move', moveHandler);
+  };
 }
 
 function configButtons(player: Player) {
@@ -91,9 +98,19 @@ function configButtons(player: Player) {
 
   btn.addEventListener('pointerdown', bombActionCallbackEvent);
   btn.addEventListener('pointerup', bombActionCallbackEvent);
+
+  return () => {
+    btn.removeEventListener('pointerdown', bombActionCallbackEvent);
+    btn.removeEventListener('pointerup', bombActionCallbackEvent);
+  };
 }
 
 export function joystickConnection(player: Player) {
-  configJoyStick(player);
-  configButtons(player);
+  const destroyJoyStick = configJoyStick(player);
+  const destroyGamepad = configButtons(player);
+
+  return () => {
+    destroyJoyStick();
+    destroyGamepad();
+  };
 }

@@ -2,7 +2,7 @@ import { getFrames } from './get-frames';
 
 export function addAnimationToElement(
   tileSetName: string,
-  animations: { frames: number[]; row: number; key: string }[],
+  animations: { frames: number[]; row: number; key: string; repeat?: number }[],
   anims: Phaser.Animations.AnimationState,
   numberOfSpriteColumns: number,
   frameRate: number,
@@ -14,7 +14,7 @@ export function addAnimationToElement(
         frames: a.frames.map(getFrames(a.row, numberOfSpriteColumns)),
       }),
       frameRate,
-      repeat: -1,
+      repeat: a.repeat ?? -1,
     });
   });
 }

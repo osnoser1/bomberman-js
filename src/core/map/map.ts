@@ -21,6 +21,10 @@ export class Map {
     this.#enemies = [];
   }
 
+  static isSolidBlock(x: number, y: number) {
+    return (y % 2 != 1 && x % 2 != 1) || y <= 0 || y >= 12 || x <= 0 || x >= 30;
+  }
+
   get emptyMap() {
     return this.#emptyMap(solidBlock, freeSpace);
   }
@@ -79,10 +83,7 @@ export class Map {
     for (let i = 0; i < Map.Rows; i++) {
       map.push([]);
       for (let j = 0; j < Map.Columns; j++) {
-        const el =
-          (i % 2 != 1 && j % 2 != 1) || i == 0 || i == 12 || j == 0 || j == 30
-            ? value
-            : noValue;
+        const el = Map.isSolidBlock(j, i) ? value : noValue;
         map[i].push(el);
       }
     }

@@ -1,17 +1,13 @@
 import { Scene } from 'phaser';
 import { Config } from '../config';
-import { Bomberman } from '../characters/bomberman';
-import { Bombs } from '../characters/collections/bombs';
 import { TileMap } from '../core/map/tile-map';
-import { keyboardConnection } from '../core/input/keyboard-connection';
-import { joystickConnection } from '../core/input/joystick';
+import { Brick } from '../characters/brick';
+import { Bomberman } from '../characters/bomberman';
 
 const frameWidth = 16;
 const frameHeight = 16;
 
 export class GameScene extends Scene {
-  private bomberman!: Bomberman;
-  private bombs!: Bombs;
   tileMap!: TileMap;
 
   constructor() {
@@ -20,7 +16,7 @@ export class GameScene extends Scene {
 
   preload() {
     this.load.image('items', 'assets/map/items.png');
-    this.load.spritesheet('brick', 'assets/map/brick.png', {
+    this.load.spritesheet(Brick.name, 'assets/map/brick.png', {
       frameWidth,
       frameHeight,
     });
@@ -28,8 +24,12 @@ export class GameScene extends Scene {
       frameWidth,
       frameHeight,
     });
+    this.load.spritesheet('fire', 'assets/map/fire.png', {
+      frameWidth,
+      frameHeight,
+    });
     [
-      'bomberman',
+      Bomberman.name,
       'balloom',
       'doll',
       'kondoria',
@@ -48,7 +48,7 @@ export class GameScene extends Scene {
 
   create() {
     this.tileMap = new TileMap(this);
-    this.tileMap.reset();
+    this.tileMap.reset(this);
 
     this.cameras.main.setBounds(
       0,
@@ -62,35 +62,10 @@ export class GameScene extends Scene {
       Config.graphics.sceneWidth,
       Config.graphics.sceneHeight,
     );
-
-    this.bombs = new Bombs(this);
-    this.bomberman = new Bomberman(this, this.bombs, 1, 1);
-
-    this.physics.add.collider(
-      this.bomberman.sprite,
-      this.tileMap.itemTileSetLayer,
-    );
-    this.physics.add.collider(this.bombs.group, this.tileMap.itemTileSetLayer);
-    this.physics.add.collider(this.bombs.group, this.bombs.group);
-    this.physics.add.collider(this.bomberman.sprite, this.bombs.group);
-    this.physics.add.collider(this.tileMap.enemies.group, [
-      this.bombs.group,
-      this.tileMap.bricks.group,
-    ]);
-    this.physics.add.collider(
-      this.tileMap.enemies.group,
-      this.tileMap.itemTileSetLayer,
-    );
-
-    this.cameras.main.startFollow(this.bomberman.sprite, true);
-
-    keyboardConnection(this.input.keyboard, this.bomberman as any);
-    joystickConnection(this.bomberman as any);
   }
 
   update(time: number, delta: number) {
     super.update(time, delta);
-    this.bomberman.update(time, delta, this.physics, this.tileMap);
-    this.tileMap.update(time, delta);
+    this.tileMap.update(time, delta, this);
   }
 }

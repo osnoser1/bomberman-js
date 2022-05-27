@@ -22,7 +22,7 @@ export abstract class Enemy extends Player {
         { key: 'down', row: 2, frames: [0, 1, 2] },
         { key: 'right', row: 3, frames: [0, 1, 2] },
         { key: 'left', row: 4, frames: [0, 1, 2] },
-        { key: 'death', row: 5, frames: [0, 1, 2, 3] },
+        { key: 'death', row: 5, frames: [0, 1, 2, 3], repeat: 0 },
       ],
       5,
       frameRate,
@@ -31,5 +31,10 @@ export abstract class Enemy extends Player {
     this.movement = new RandomMovement(this);
     this.sprite.setDepth(1);
     this.sprite.setBounce(1, 1);
+  }
+
+  kill() {
+    super.kill();
+    this.movement?.stop();
   }
 }
