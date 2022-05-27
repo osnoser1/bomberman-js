@@ -3,6 +3,7 @@ import { Config } from '../config';
 import { TileMap } from '../core/map/tile-map';
 import { Brick } from '../characters/brick';
 import { Bomberman } from '../characters/bomberman';
+import { Bomb } from '../characters/bomb';
 
 const frameWidth = 16;
 const frameHeight = 16;
@@ -20,7 +21,7 @@ export class GameScene extends Scene {
       frameWidth,
       frameHeight,
     });
-    this.load.spritesheet('bomb', 'assets/map/bomb.png', {
+    this.load.spritesheet(Bomb.name, 'assets/map/bomb.png', {
       frameWidth,
       frameHeight,
     });

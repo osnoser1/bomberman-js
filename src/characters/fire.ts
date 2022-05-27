@@ -7,7 +7,7 @@ import { Brick } from './brick';
 import Body = Phaser.Physics.Arcade.Body;
 import { Axis, Direction, DirectionToOrientation } from '../utils/movement';
 import { Player } from '../core/player/player';
-import Tilemap = Phaser.Tilemaps.Tilemap;
+import { Bomb } from './bomb';
 
 const frameRate = 8;
 
@@ -100,8 +100,10 @@ export class Fire {
       }
 
       const bricks = bodies.filter(b => b.gameObject?.name === Brick.name);
+      const bombs = bodies.filter(b => b.gameObject?.name === Bomb.name);
 
       const closestBrick = scene.physics.closest(sprite, bricks) as Body | null;
+      const closestBomb = scene.physics.closest(sprite, bombs) as Body | null;
 
       for (let i = 1; i <= fireLength; i++) {
         const fireTile = {
@@ -117,8 +119,11 @@ export class Fire {
           fireTile.y,
         );
 
-        if (closestBrick && worldXY.equals(closestBrick)) {
-          this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap);
+        if (
+          (closestBrick && worldXY.equals(closestBrick)) ||
+          (closestBomb && worldXY.equals(closestBomb))
+        ) {
+          this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap, scene);
           break;
         }
 
@@ -130,7 +135,7 @@ export class Fire {
           sprite.anims.play(DirectionToOrientation[dir]);
         }
 
-        this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap);
+        this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap, scene);
       }
     }
   }
@@ -158,13 +163,20 @@ export class Fire {
   #killPlayers(
     bodies: Phaser.Physics.Arcade.Body[],
     fireTile: { x: number; y: number },
-    tileMap: Tilemap,
+    tileMap: Phaser.Tilemaps.Tilemap,
+    scene: GameScene,
   ) {
     bodies
       .filter(b => {
         const tilePosition = tileMap.worldToTileXY(b.center.x, b.center.y);
         return tilePosition.equals(fireTile);
       })
-      .forEach(b => (b.gameObject.getData('player') as Player).kill());
+      .forEach(b => {
+        if (b.gameObject.name === Bomb.name) {
+          (b.gameObject.getData('player') as Bomb)?.detonate(scene);
+        } else {
+          (b.gameObject.getData('player') as Player).kill();
+        }
+      });
   }
 }

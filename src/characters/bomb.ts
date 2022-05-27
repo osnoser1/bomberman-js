@@ -17,12 +17,15 @@ export class Bomb extends Player {
     tileY: number,
   ) {
     super(
-      'bomb',
+      Bomb.name,
       group.get(),
       tileX,
       tileY,
-      [{ key: 'initial', row: 0, frames: [0, 1, 2] }],
-      6,
+      [
+        { key: 'initial', row: 0, frames: [0, 1, 2] },
+        { key: 'death', row: 0, frames: [3], repeat: 0 },
+      ],
+      4,
       frameRate,
       true,
     );
@@ -36,8 +39,18 @@ export class Bomb extends Player {
   }
 
   detonate(scene: GameScene) {
+    if (!this.sprite.anims || this.sprite.anims.getName() === 'death') {
+      return;
+    }
+
+    this.sprite.anims.play('death');
+    this.kill();
     const tile = getMapTilePosition(this.sprite.getCenter());
-    this.sprite.destroy();
     new Fire(scene, tile, this.#player.fireLength);
+  }
+
+  kill() {
+    super.kill();
+    this.sprite.anims?.complete();
   }
 }
