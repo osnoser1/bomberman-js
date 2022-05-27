@@ -4,9 +4,11 @@ import Group = Phaser.Physics.Arcade.Group;
 const frameRate = 8;
 
 export class Brick extends Player {
+  static playerName = 'brick';
+
   constructor(group: Group, tileX: number, tileY: number) {
     super(
-      Brick.name,
+      Brick.playerName,
       group.get(),
       tileX,
       tileY,

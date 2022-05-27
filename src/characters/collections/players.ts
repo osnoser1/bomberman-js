@@ -9,7 +9,7 @@ export class Players {
 
   constructor(scene: GameScene) {
     this.#scene = scene;
-    this.group = scene.physics.add.group({ defaultKey: Bomberman.name });
+    this.group = scene.physics.add.group({ defaultKey: Bomberman.playerName });
   }
 
   addPlayer(scene: GameScene, tileX: number, tileY: number) {

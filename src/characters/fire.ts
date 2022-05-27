@@ -99,8 +99,10 @@ export class Fire {
         bodies.reverse();
       }
 
-      const bricks = bodies.filter(b => b.gameObject?.name === Brick.name);
-      const bombs = bodies.filter(b => b.gameObject?.name === Bomb.name);
+      const bricks = bodies.filter(
+        b => b.gameObject?.name === Brick.playerName,
+      );
+      const bombs = bodies.filter(b => b.gameObject?.name === Bomb.playerName);
 
       const closestBrick = scene.physics.closest(sprite, bricks) as Body | null;
       const closestBomb = scene.physics.closest(sprite, bombs) as Body | null;
@@ -172,7 +174,7 @@ export class Fire {
         return tilePosition.equals(fireTile);
       })
       .forEach(b => {
-        if (b.gameObject.name === Bomb.name) {
+        if (b.gameObject.name === Bomb.playerName) {
           (b.gameObject.getData('player') as Bomb)?.detonate(scene);
         } else {
           (b.gameObject.getData('player') as Player).kill();

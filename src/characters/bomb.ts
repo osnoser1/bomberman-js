@@ -7,6 +7,8 @@ import { getMapTilePosition } from '../utils/map';
 const frameRate = 3;
 
 export class Bomb extends Player {
+  static playerName = 'bomb';
+
   #player: Bomberman;
 
   constructor(
@@ -17,7 +19,7 @@ export class Bomb extends Player {
     tileY: number,
   ) {
     super(
-      Bomb.name,
+      Bomb.playerName,
       group.get(),
       tileX,
       tileY,

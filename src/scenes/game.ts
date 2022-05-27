@@ -17,11 +17,11 @@ export class GameScene extends Scene {
 
   preload() {
     this.load.image('items', 'assets/map/items.png');
-    this.load.spritesheet(Brick.name, 'assets/map/brick.png', {
+    this.load.spritesheet(Brick.playerName, 'assets/map/brick.png', {
       frameWidth,
       frameHeight,
     });
-    this.load.spritesheet(Bomb.name, 'assets/map/bomb.png', {
+    this.load.spritesheet(Bomb.playerName, 'assets/map/bomb.png', {
       frameWidth,
       frameHeight,
     });
@@ -30,7 +30,7 @@ export class GameScene extends Scene {
       frameHeight,
     });
     [
-      Bomberman.name,
+      Bomberman.playerName,
       'balloom',
       'doll',
       'kondoria',

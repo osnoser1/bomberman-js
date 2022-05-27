@@ -8,7 +8,7 @@ export class Bombs {
 
   constructor(scene: GameScene) {
     this.#scene = scene;
-    this.group = scene.physics.add.group({ defaultKey: Bomb.name });
+    this.group = scene.physics.add.group({ defaultKey: Bomb.playerName });
   }
 
   addBomb(player: Bomberman, tileX: number, tileY: number) {

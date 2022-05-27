@@ -20,6 +20,8 @@ enum BombermanState {
 }
 
 export class Bomberman extends Player {
+  static playerName = 'bomberman';
+
   detonator: boolean;
   fireLength: number;
   bombs: Bombs;
@@ -34,7 +36,7 @@ export class Bomberman extends Player {
     tileY: number,
   ) {
     super(
-      Bomberman.name,
+      Bomberman.playerName,
       sprite,
       tileX,
       tileY,

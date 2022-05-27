@@ -6,7 +6,7 @@ export class Bricks {
   group: Phaser.Physics.Arcade.Group;
 
   constructor(scene: GameScene) {
-    this.group = scene.physics.add.group({ defaultKey: Brick.name });
+    this.group = scene.physics.add.group({ defaultKey: Brick.playerName });
   }
 
   generateRandom(map: Map) {
