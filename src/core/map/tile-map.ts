@@ -39,7 +39,7 @@ export class TileMap {
   }
 
   update(time: number, delta: number, scene: GameScene) {
-    this.players.update(time, delta, scene.physics);
+    this.players.update();
     this.enemies.update(time, delta);
   }
 }

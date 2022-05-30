@@ -19,25 +19,23 @@ export class Players {
   }
 
   addPlayer(scene: GameScene, tileX: number, tileY: number) {
-    const bomberman = new Bomberman(this.group.get(), scene, tileX, tileY);
+    const bomberman = new Bomberman(scene, tileX, tileY);
+    this.group.add(bomberman);
     const allBombs = this.group
       .getChildren()
-      .map(go => (go.getData('player') as Bomberman).bombs.group);
-    scene.physics.add.collider(
-      bomberman.sprite,
-      scene.tileMap.itemTileSetLayer,
-    );
+      .map(go => (go as Bomberman).bombs.group);
+    scene.physics.add.collider(bomberman, scene.tileMap.itemTileSetLayer);
     scene.physics.add.collider(
       bomberman.bombs.group,
       scene.tileMap.itemTileSetLayer,
     );
     // TODO: improve to handle multiple players
     scene.physics.add
-      .collider(bomberman.sprite, scene.tileMap.bricks.group)
+      .collider(bomberman, scene.tileMap.bricks.group)
       .setName(`playerBrickCollision`);
     scene.physics.add.collider(bomberman.bombs.group, allBombs);
     scene.physics.add
-      .collider(bomberman.sprite, allBombs)
+      .collider(bomberman, allBombs)
       .setName(`playerBombsCollision`);
     scene.physics.add.collider(scene.tileMap.enemies.group, [
       bomberman.bombs.group,
@@ -47,19 +45,11 @@ export class Players {
       scene.tileMap.enemies.group,
       scene.tileMap.itemTileSetLayer,
     );
-    scene.cameras.main.startFollow(bomberman.sprite, true);
+    scene.cameras.main.startFollow(bomberman, true);
   }
 
-  update(
-    time: number,
-    delta: number,
-    physics: Phaser.Physics.Arcade.ArcadePhysics,
-  ) {
+  update() {
     const scene = this.group.scene as GameScene;
-    this.group.children.each(entry => {
-      const player: Bomberman = entry.getData('player');
-      player.update(time, delta, physics, scene.tileMap);
-    });
     if (this.group.children.size === 0) {
       this.addPlayer(scene, 1, 1);
     }
@@ -67,7 +57,7 @@ export class Players {
 
   #collectItem(body1: GameObjectWithBody, body2: GameObjectWithBody) {
     const scene = body1.scene as GameScene;
-    const bomberman: Bomberman = body1.getData('player');
+    const bomberman = body1 as Bomberman;
     const item: Item = body2.getData('player');
     if (
       item.itemType === ItemType.Door &&

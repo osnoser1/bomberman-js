@@ -36,6 +36,8 @@ function axisToDimension(dir: Direction, length: number) {
 }
 
 export class Fire {
+  static playerName = 'fire';
+
   group: Phaser.Physics.Arcade.Group;
 
   constructor(
@@ -43,7 +45,7 @@ export class Fire {
     tile: { x: number; y: number },
     fireLength: number,
   ) {
-    this.group = scene.physics.add.group({ defaultKey: 'fire' });
+    this.group = scene.physics.add.group({ defaultKey: Fire.playerName });
     const animations = [
       { key: 'center', row: 0, frames: [0, 1, 2, 3], repeat: 0 },
       { key: 'up', row: 1, frames: [0, 1, 2, 3], repeat: 0 },
@@ -152,6 +154,7 @@ export class Fire {
     }[],
   ) {
     const sprite: SpriteWithDynamicBody = this.group.get();
+    sprite.setName(Fire.playerName);
     sprite.setOrigin(0, 0);
     sprite.setImmovable(true);
     sprite.setScale(2.5);
@@ -177,8 +180,11 @@ export class Fire {
         const player = b.gameObject.getData('player');
         if (b.gameObject.name === Bomb.playerName) {
           (player as Bomb)?.detonate();
-        } else if (!(player instanceof Bomberman) || !player.flamePass) {
-          (player as Player)?.kill();
+        } else if (
+          b.gameObject.name !== Fire.playerName &&
+          (!(b.gameObject instanceof Bomberman) || !b.gameObject.flamePass)
+        ) {
+          ((player as Player) ?? b.gameObject)?.kill();
         }
       });
   }
