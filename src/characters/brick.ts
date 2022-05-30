@@ -43,7 +43,8 @@ export class Brick extends Player2 {
     }
 
     this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      new Item(itemGroup.get(), this.#itemType!, tileX, tileY);
+      const item = new Item(itemGroup.scene, this.#itemType!, tileX, tileY);
+      itemGroup.add(item);
     });
   }
 }

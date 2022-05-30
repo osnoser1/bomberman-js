@@ -58,7 +58,7 @@ export class Players {
   #collectItem(body1: GameObjectWithBody, body2: GameObjectWithBody) {
     const scene = body1.scene as GameScene;
     const bomberman = body1 as Bomberman;
-    const item: Item = body2.getData('player');
+    const item = body2 as Item;
     if (
       item.itemType === ItemType.Door &&
       scene.tileMap.enemies.group.getLength() === 0
