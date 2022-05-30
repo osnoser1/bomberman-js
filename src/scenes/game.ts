@@ -63,6 +63,6 @@ export class GameScene extends Scene {
 
   update(time: number, delta: number) {
     super.update(time, delta);
-    this.tileMap.update(time, delta, this);
+    this.tileMap.update();
   }
 }

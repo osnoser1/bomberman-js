@@ -2,7 +2,7 @@ import { GameScene } from '../../scenes/game';
 import { Map } from '../../core/map/map';
 import { resolveEnemy } from '../utils/enemy-factory';
 import '../';
-import { Player } from '../../core/player/player';
+import { Player2 } from '../../core/player/player';
 import { Brick } from '../brick';
 
 export class Enemies {
@@ -16,15 +16,9 @@ export class Enemies {
     const enemies = map.randomEnemies();
     enemies.forEach(b => {
       const Enemy = resolveEnemy(b.type);
-      const enemy = new Enemy(this.group, b.x, b.y) as Player;
+      const enemy = new Enemy(this.group.scene, b.x, b.y) as Player2;
+      this.group.add(enemy);
       enemy.startMovement();
-    });
-  }
-
-  update(_time: number, _delta: number) {
-    this.group.children.each(entry => {
-      const player: Player = entry.getData('player');
-      player.update(_time, _delta);
     });
   }
 }
