@@ -3,6 +3,7 @@ import nipplejs, { JoystickOutputData } from 'nipplejs';
 import { Player } from '../player/player';
 import { Input } from './gamepad';
 import Buttons = Input.Buttons;
+import Gamepad = Input.Gamepad;
 
 function configJoyStick(player: Player) {
   const gamepad = player.gamepad;
@@ -67,42 +68,83 @@ function configJoyStick(player: Player) {
 function configButtons(player: Player) {
   const gamepad = player.gamepad;
   const body = document.querySelector('body')!;
+  const [plantBombBtn, removePlantBombBtnEvent] = getButton(gamepad, {
+    src: 'assets/joystick/bomb-btn.png',
+    button: Buttons.A,
+    width: '100px',
+    bottom: '50px',
+    right: '50px',
+  });
+  const [explodeBombBtn, removeExplodeBombBtnEvent] = getButton(gamepad, {
+    src: 'assets/joystick/bomb-explode-btn.png',
+    button: Buttons.B,
+    width: '75px',
+    bottom: '125px',
+    right: '150px',
+  });
+
+  body.appendChild(plantBombBtn);
+  body.appendChild(explodeBombBtn);
+
+  return () => {
+    removePlantBombBtnEvent();
+    removeExplodeBombBtnEvent();
+  };
+}
+
+function getButton(
+  gamepad: Gamepad,
+  {
+    src,
+    button,
+    width,
+    right,
+    bottom,
+  }: {
+    src: string;
+    button: Buttons;
+    width: string;
+    right: string;
+    bottom: string;
+  },
+) {
   const btn = document.createElement('div');
   const img = document.createElement('img');
 
-  img.src = 'assets/joystick/bomb-btn.png';
+  img.src = src;
   btn.appendChild(img);
 
   Object.assign(btn.style, {
-    bottom: '50px',
+    bottom,
     display: 'flex',
     opacity: '0.5',
     position: 'absolute',
-    right: '50px',
+    right,
     transition: 'opacity 250ms ease 0s',
   } as CSSStyleDeclaration);
   Object.assign(img.style, {
-    width: '100px',
+    width,
     pointerEvents: 'none',
     userSelect: 'none',
   } as CSSStyleDeclaration);
-
-  body.appendChild(btn);
 
   const bombActionCallbackEvent = (ev: Event) => {
     ev.stopPropagation();
     const isPointerDownEvt = ev.type === 'pointerdown';
     btn.style.opacity = isPointerDownEvt ? '0.8' : '0.5';
-    gamepad.press(Buttons.A, isPointerDownEvt);
+    gamepad.press(button, isPointerDownEvt);
   };
 
   btn.addEventListener('pointerdown', bombActionCallbackEvent);
   btn.addEventListener('pointerup', bombActionCallbackEvent);
 
-  return () => {
-    btn.removeEventListener('pointerdown', bombActionCallbackEvent);
-    btn.removeEventListener('pointerup', bombActionCallbackEvent);
-  };
+  return [
+    btn,
+    () => {
+      btn.removeEventListener('pointerdown', bombActionCallbackEvent);
+      btn.removeEventListener('pointerup', bombActionCallbackEvent);
+    },
+  ] as const;
 }
 
 export function joystickConnection(player: Player) {
