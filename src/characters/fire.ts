@@ -177,14 +177,14 @@ export class Fire {
         return tilePosition.equals(fireTile);
       })
       .forEach(b => {
-        const player = b.gameObject.getData('player');
         if (b.gameObject.name === Bomb.playerName) {
           (b.gameObject as Bomb)?.detonate();
         } else if (
+          // TODO: handle death during explosion
           b.gameObject.name !== Fire.playerName &&
           (!(b.gameObject instanceof Bomberman) || !b.gameObject.flamePass)
         ) {
-          ((player as Player) ?? b.gameObject)?.kill();
+          (b.gameObject as Player)?.kill();
         }
       });
   }

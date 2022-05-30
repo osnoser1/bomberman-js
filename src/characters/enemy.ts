@@ -1,10 +1,10 @@
-import { Player2 } from '../core/player/player';
+import { Player } from '../core/player/player';
 import { RandomMovement } from '../movement/random-movement';
 import { GameScene } from '../scenes/game';
 
 const frameRate = 5;
 
-export abstract class Enemy extends Player2 {
+export abstract class Enemy extends Player {
   protected constructor(
     scene: GameScene,
     name: string,

@@ -1,4 +1,4 @@
-import { Player2 } from '../core/player/player';
+import { Player } from '../core/player/player';
 import { random } from 'lodash-es';
 import { Input } from '../core/input/gamepad';
 import Buttons = Input.Buttons;
@@ -19,12 +19,12 @@ enum Movement {
 }
 
 export class RandomMovement {
-  readonly #player: Player2;
+  readonly #player: Player;
   readonly #gamepad: Gamepad;
   #buttons: Buttons[] = [];
   #intervalId?: number;
 
-  constructor(player: Player2) {
+  constructor(player: Player) {
     this.#player = player;
     this.#gamepad = this.#player.gamepad;
     if (this.#player.movementType === RandomMovementType.Impossible) {

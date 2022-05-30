@@ -1,9 +1,9 @@
-import { Player2 } from '../core/player/player';
+import { Player } from '../core/player/player';
 import { Item, ItemTypeValue } from './item';
 
 const frameRate = 8;
 
-export class Brick extends Player2 {
+export class Brick extends Player {
   static playerName = 'brick';
 
   readonly #itemType?: ItemTypeValue;
@@ -26,7 +26,6 @@ export class Brick extends Player2 {
       ],
       6,
       frameRate,
-      true,
     );
 
     this.#itemType = hasItem;

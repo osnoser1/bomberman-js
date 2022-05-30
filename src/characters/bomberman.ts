@@ -1,7 +1,7 @@
 import { GameScene } from '../scenes/game';
 import { Bombs } from './collections/bombs';
 import { getMapTilePosition } from '../utils/map';
-import { Player2, Speed } from '../core/player/player';
+import { Player, Speed } from '../core/player/player';
 import { TileMap } from '../core/map/tile-map';
 import { Input } from '../core/input/gamepad';
 import { keyboardConnection } from '../core/input/keyboard-connection';
@@ -18,7 +18,7 @@ enum BombermanState {
   RIGHT = 'right',
 }
 
-export class Bomberman extends Player2 {
+export class Bomberman extends Player {
   static playerName = 'bomberman';
 
   bombs: Bombs;

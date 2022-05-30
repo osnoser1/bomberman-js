@@ -1,4 +1,4 @@
-import { Player2 } from '../core/player/player';
+import { Player } from '../core/player/player';
 import { Bomberman } from './bomberman';
 import { Fire } from './fire';
 import { GameScene } from '../scenes/game';
@@ -7,7 +7,7 @@ import { Scene } from 'phaser';
 
 const frameRate = 3;
 
-export class Bomb extends Player2 {
+export class Bomb extends Player {
   static playerName = 'bomb';
 
   #player: Bomberman;
@@ -24,7 +24,6 @@ export class Bomb extends Player2 {
       ],
       4,
       frameRate,
-      true,
     );
     this.#player = player;
     this.setDepth(1);

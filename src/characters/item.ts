@@ -1,4 +1,4 @@
-import { Player2, Speed } from '../core/player/player';
+import { Player, Speed } from '../core/player/player';
 import { Bomberman } from './bomberman';
 import { Scene } from 'phaser';
 
@@ -28,7 +28,7 @@ const skillAction: Record<ItemTypeValue, (player: Bomberman) => void> = {
 
 export type ItemTypeValue = typeof ItemType[keyof typeof ItemType];
 
-export class Item extends Player2 {
+export class Item extends Player {
   static readonly playerName = 'item';
 
   constructor(
@@ -55,7 +55,6 @@ export class Item extends Player2 {
       ],
       9,
       1,
-      false,
       itemType,
     );
   }
