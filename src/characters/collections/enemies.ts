@@ -3,13 +3,12 @@ import { Map } from '../../core/map/map';
 import { resolveEnemy } from '../utils/enemy-factory';
 import '../';
 import { Player2 } from '../../core/player/player';
-import { Brick } from '../brick';
 
 export class Enemies {
   group: Phaser.Physics.Arcade.Group;
 
   constructor(scene: GameScene) {
-    this.group = scene.physics.add.group({ defaultKey: Brick.playerName });
+    this.group = scene.physics.add.group();
   }
 
   generateRandom(map: Map) {

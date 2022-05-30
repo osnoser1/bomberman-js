@@ -1,23 +1,23 @@
-import { Player } from '../core/player/player';
+import { Player2 } from '../core/player/player';
 import { Item, ItemTypeValue } from './item';
 
 const frameRate = 8;
 
-export class Brick extends Player {
+export class Brick extends Player2 {
   static playerName = 'brick';
 
   readonly #itemType?: ItemTypeValue;
 
   constructor(
-    group: Phaser.Physics.Arcade.Group,
+    scene: Phaser.Scene,
     itemGroup: Phaser.Physics.Arcade.Group,
     tileX: number,
     tileY: number,
     hasItem: ItemTypeValue | undefined,
   ) {
     super(
+      scene,
       Brick.playerName,
-      group.get(),
       tileX,
       tileY,
       [
@@ -42,7 +42,7 @@ export class Brick extends Player {
       return;
     }
 
-    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+    this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       new Item(itemGroup.get(), this.#itemType!, tileX, tileY);
     });
   }
