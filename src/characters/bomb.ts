@@ -31,6 +31,7 @@ export class Bomb extends Player {
       true,
     );
     this.#player = player;
+    this.sprite.setDepth(1);
 
     if (!player.detonator) {
       setTimeout(() => {

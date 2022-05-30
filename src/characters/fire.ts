@@ -8,6 +8,7 @@ import Body = Phaser.Physics.Arcade.Body;
 import { Axis, Direction, DirectionToOrientation } from '../utils/movement';
 import { Player } from '../core/player/player';
 import { Bomb } from './bomb';
+import { Bomberman } from './bomberman';
 
 const frameRate = 8;
 
@@ -173,10 +174,11 @@ export class Fire {
         return tilePosition.equals(fireTile);
       })
       .forEach(b => {
+        const player = b.gameObject.getData('player');
         if (b.gameObject.name === Bomb.playerName) {
-          (b.gameObject.getData('player') as Bomb)?.detonate();
-        } else {
-          (b.gameObject.getData('player') as Player)?.kill();
+          (player as Bomb)?.detonate();
+        } else if (!(player instanceof Bomberman) || !player.flamePass) {
+          (player as Player)?.kill();
         }
       });
   }

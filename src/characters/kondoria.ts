@@ -9,6 +9,5 @@ export class Kondoria extends Enemy {
     super('kondoria', group.get(), tileX, tileY);
 
     this.speed = Speed.Slowest;
-    this.sprite.setDepth(1);
   }
 }

@@ -9,6 +9,5 @@ export class Ovapi extends Enemy {
     super('ovapi', group.get(), tileX, tileY);
 
     this.speed = Speed.Slowest;
-    this.sprite.setDepth(1);
   }
 }

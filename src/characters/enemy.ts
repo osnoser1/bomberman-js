@@ -29,7 +29,7 @@ export abstract class Enemy extends Player {
     );
 
     this.movement = new RandomMovement(this);
-    this.sprite.setDepth(1);
+    this.sprite.setDepth(2);
     this.sprite.setBounce(1, 1);
   }
 

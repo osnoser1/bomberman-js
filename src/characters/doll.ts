@@ -9,6 +9,5 @@ export class Doll extends Enemy {
     super('doll', group.get(), tileX, tileY);
 
     this.speed = Speed.Slow;
-    this.sprite.setDepth(1);
   }
 }

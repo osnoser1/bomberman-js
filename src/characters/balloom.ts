@@ -11,6 +11,5 @@ export class Balloom extends Enemy {
 
     this.speed = Speed.Slowest;
     this.movementType = RandomMovementType.Low;
-    this.sprite.setDepth(1);
   }
 }

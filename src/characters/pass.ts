@@ -9,6 +9,5 @@ export class Pass extends Enemy {
     super('pass', group.get(), tileX, tileY);
 
     this.speed = Speed.Mid;
-    this.sprite.setDepth(1);
   }
 }

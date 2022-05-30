@@ -9,6 +9,5 @@ export class Oneal extends Enemy {
     super('oneal', group.get(), tileX, tileY);
 
     this.speed = Speed.Slow;
-    this.sprite.setDepth(1);
   }
 }

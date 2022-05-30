@@ -26,6 +26,7 @@ export class Bomberman extends Player {
   bombLength: number;
   detonator: boolean;
   fireLength: number;
+  flamePass: boolean;
 
   readonly #destroyKeyboardConnection: () => void;
   readonly #destroyGamepadConnection: () => void;
@@ -58,8 +59,9 @@ export class Bomberman extends Player {
     this.detonator = false;
     this.fireLength = 2;
     this.bombLength = 1;
+    this.flamePass = false;
 
-    this.sprite.setDepth(1);
+    this.sprite.setDepth(3);
     this.#destroyKeyboardConnection = keyboardConnection(
       scene.input.keyboard,
       this as any,
@@ -118,6 +120,4 @@ export class Bomberman extends Player {
       .filter(c => c.name === 'playerBrickCollision')
       .forEach(c => c.destroy());
   }
-
-  setFlamePass(_value: boolean) {}
 }

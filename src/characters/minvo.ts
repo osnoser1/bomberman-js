@@ -9,6 +9,5 @@ export class Minvo extends Enemy {
     super('minvo', group.get(), tileX, tileY);
 
     this.speed = Speed.Mid;
-    this.sprite.setDepth(1);
   }
 }
