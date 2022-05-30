@@ -125,7 +125,7 @@ export class Fire {
           (closestBrick && worldXY.equals(closestBrick)) ||
           (closestBomb && worldXY.equals(closestBomb))
         ) {
-          this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap, scene);
+          this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap);
           break;
         }
 
@@ -137,7 +137,7 @@ export class Fire {
           sprite.anims.play(DirectionToOrientation[dir]);
         }
 
-        this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap, scene);
+        this.#killPlayers(bodies, fireTile, scene.tileMap.tileMap);
       }
     }
   }
@@ -166,7 +166,6 @@ export class Fire {
     bodies: Phaser.Physics.Arcade.Body[],
     fireTile: { x: number; y: number },
     tileMap: Phaser.Tilemaps.Tilemap,
-    scene: GameScene,
   ) {
     bodies
       .filter(b => {
@@ -175,9 +174,9 @@ export class Fire {
       })
       .forEach(b => {
         if (b.gameObject.name === Bomb.playerName) {
-          (b.gameObject.getData('player') as Bomb)?.detonate(scene);
+          (b.gameObject.getData('player') as Bomb)?.detonate();
         } else {
-          (b.gameObject.getData('player') as Player).kill();
+          (b.gameObject.getData('player') as Player)?.kill();
         }
       });
   }

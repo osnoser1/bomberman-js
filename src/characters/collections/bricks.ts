@@ -1,16 +1,30 @@
 import { GameScene } from '../../scenes/game';
 import { Map } from '../../core/map/map';
 import { Brick } from '../brick';
+import { random } from 'lodash-es';
+import { Item, ItemType } from '../item';
 
 export class Bricks {
   group: Phaser.Physics.Arcade.Group;
+  itemsGroup: Phaser.Physics.Arcade.Group;
 
   constructor(scene: GameScene) {
     this.group = scene.physics.add.group({ defaultKey: Brick.playerName });
+    this.itemsGroup = scene.physics.add.group({ defaultKey: Item.playerName });
   }
 
   generateRandom(map: Map) {
     const bricks = map.randomBricks();
-    bricks.forEach(b => new Brick(this.group, b.x, b.y));
+
+    const itemIndex = random(bricks.length - 1);
+    const itemTypeValues = Object.values(ItemType);
+
+    bricks.forEach((b, i) => {
+      // Not generate door item
+      const itemType = itemTypeValues[random(itemTypeValues.length - 2)];
+      // TODO: modify this condition to generate only one power-up
+      const item = itemIndex === i ? ItemType.Door : itemType;
+      new Brick(this.group, this.itemsGroup, b.x, b.y, item);
+    });
   }
 }

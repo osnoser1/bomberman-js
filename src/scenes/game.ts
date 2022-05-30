@@ -4,6 +4,7 @@ import { TileMap } from '../core/map/tile-map';
 import { Brick } from '../characters/brick';
 import { Bomberman } from '../characters/bomberman';
 import { Bomb } from '../characters/bomb';
+import { Item } from '../characters/item';
 
 const frameWidth = 16;
 const frameHeight = 16;
@@ -16,7 +17,11 @@ export class GameScene extends Scene {
   }
 
   preload() {
-    this.load.image('items', 'assets/map/items.png');
+    this.load.image('map', 'assets/map/map-items.png');
+    this.load.spritesheet(Item.playerName, 'assets/map/items.png', {
+      frameWidth,
+      frameHeight,
+    });
     this.load.spritesheet(Brick.playerName, 'assets/map/brick.png', {
       frameWidth,
       frameHeight,

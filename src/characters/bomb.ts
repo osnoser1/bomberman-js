@@ -13,7 +13,6 @@ export class Bomb extends Player {
 
   constructor(
     group: Phaser.Physics.Arcade.Group,
-    scene: GameScene,
     player: Bomberman,
     tileX: number,
     tileY: number,
@@ -35,16 +34,17 @@ export class Bomb extends Player {
 
     if (!player.detonator) {
       setTimeout(() => {
-        this.detonate(scene);
+        this.detonate();
       }, 3200);
     }
   }
 
-  detonate(scene: GameScene) {
+  detonate() {
     if (!this.sprite.anims || this.sprite.anims.getName() === 'death') {
       return;
     }
 
+    const scene = this.sprite.scene as GameScene;
     this.sprite.anims.play('death');
     this.kill();
     const tile = getMapTilePosition(this.sprite.getCenter());

@@ -1,12 +1,20 @@
 import { Player } from '../core/player/player';
-import Group = Phaser.Physics.Arcade.Group;
+import { Item, ItemTypeValue } from './item';
 
 const frameRate = 8;
 
 export class Brick extends Player {
   static playerName = 'brick';
 
-  constructor(group: Group, tileX: number, tileY: number) {
+  readonly #itemType?: ItemTypeValue;
+
+  constructor(
+    group: Phaser.Physics.Arcade.Group,
+    itemGroup: Phaser.Physics.Arcade.Group,
+    tileX: number,
+    tileY: number,
+    hasItem: ItemTypeValue | undefined,
+  ) {
     super(
       Brick.playerName,
       group.get(),
@@ -20,5 +28,22 @@ export class Brick extends Player {
       frameRate,
       true,
     );
+
+    this.#itemType = hasItem;
+    this.setHiddenItem(itemGroup, tileX, tileY);
+  }
+
+  private setHiddenItem(
+    itemGroup: Phaser.Physics.Arcade.Group,
+    tileX: number,
+    tileY: number,
+  ) {
+    if (!this.#itemType) {
+      return;
+    }
+
+    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      new Item(itemGroup.get(), this.#itemType!, tileX, tileY);
+    });
   }
 }

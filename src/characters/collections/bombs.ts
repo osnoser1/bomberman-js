@@ -4,14 +4,20 @@ import { Bomberman } from '../bomberman';
 
 export class Bombs {
   group: Phaser.Physics.Arcade.Group;
-  readonly #scene: GameScene;
 
   constructor(scene: GameScene) {
-    this.#scene = scene;
     this.group = scene.physics.add.group({ defaultKey: Bomb.playerName });
   }
 
   addBomb(player: Bomberman, tileX: number, tileY: number) {
-    new Bomb(this.group, this.#scene, player, tileX, tileY);
+    new Bomb(this.group, player, tileX, tileY);
+  }
+
+  detonate() {
+    const bomb: Bomb | undefined = this.group
+      .getChildren()
+      .at(0)
+      ?.getData('player');
+    bomb?.detonate();
   }
 }

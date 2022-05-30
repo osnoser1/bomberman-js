@@ -23,15 +23,10 @@ export class TileMap {
       tileWidth: Config.graphics.tile.width,
       tileHeight: Config.graphics.tile.height,
     });
-    const itemsTileSet = this.tileMap.addTilesetImage(
-      'items',
-      undefined,
-      16,
-      16,
-    );
+    const itemsTileSet = this.tileMap.addTilesetImage('map', undefined, 16, 16);
     this.itemTileSetLayer = this.tileMap.createLayer(0, itemsTileSet);
     this.bricks = new Bricks(scene);
-    this.players = new Players(scene);
+    this.players = new Players(scene, this.bricks);
     this.enemies = new Enemies(scene);
 
     this.tileMap.setCollision(0);
@@ -44,7 +39,7 @@ export class TileMap {
   }
 
   update(time: number, delta: number, scene: GameScene) {
-    this.players.update(time, delta, scene.physics, this);
+    this.players.update(time, delta, scene.physics);
     this.enemies.update(time, delta);
   }
 }

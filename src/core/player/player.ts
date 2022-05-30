@@ -48,6 +48,7 @@ export abstract class Player {
     numberOfSpriteColumns: number,
     frameRate: number,
     immovable = false,
+    initialState = 'initial',
   ) {
     this.gamepad = new Gamepad();
     this.sprite.name = this.name;
@@ -68,7 +69,7 @@ export abstract class Player {
       numberOfSpriteColumns,
       frameRate,
     );
-    this.sprite.anims.play('initial');
+    this.sprite.anims.play(initialState);
 
     this.gamepad.addListener('change', this.#updateAnimation, this);
   }
@@ -78,6 +79,11 @@ export abstract class Player {
   }
 
   kill() {
+    if (!this.sprite.anims.exists('death')) {
+      this.sprite.destroy();
+      return;
+    }
+
     this.sprite.anims.play('death');
 
     this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () =>

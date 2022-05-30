@@ -4,10 +4,10 @@ import { getMapTilePosition } from '../utils/map';
 import { Player, Speed } from '../core/player/player';
 import { TileMap } from '../core/map/tile-map';
 import { Input } from '../core/input/gamepad';
-import Buttons = Input.Buttons;
-import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 import { keyboardConnection } from '../core/input/keyboard-connection';
 import { joystickConnection } from '../core/input/joystick';
+import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+import Buttons = Input.Buttons;
 
 const frameRate = 6;
 
@@ -22,9 +22,10 @@ enum BombermanState {
 export class Bomberman extends Player {
   static playerName = 'bomberman';
 
+  bombs: Bombs;
+  bombLength: number;
   detonator: boolean;
   fireLength: number;
-  bombs: Bombs;
 
   readonly #destroyKeyboardConnection: () => void;
   readonly #destroyGamepadConnection: () => void;
@@ -55,7 +56,9 @@ export class Bomberman extends Player {
     this.bombs = new Bombs(scene);
     this.speed = Speed.Mid;
     this.detonator = false;
-    this.fireLength = 3;
+    this.fireLength = 2;
+    this.bombLength = 1;
+
     this.sprite.setDepth(1);
     this.#destroyKeyboardConnection = keyboardConnection(
       scene.input.keyboard,
@@ -70,12 +73,18 @@ export class Bomberman extends Player {
   ) {
     if (
       this.gamepad.isPressed(Buttons.A) &&
+      this.bombs.group.getLength() < this.bombLength &&
       !physics.overlap(this.sprite, this.bombs.group) &&
       !physics.overlap(this.sprite, tileMap.bricks.group)
     ) {
       const center = this.sprite.getCenter();
       const { x: tileX, y: tileY } = getMapTilePosition(center);
       this.bombs.addBomb(this, tileX, tileY);
+    }
+
+    if (this.gamepad.isPressed(Buttons.B) && this.detonator) {
+      this.bombs.detonate();
+      this.gamepad.press(Buttons.B, false);
     }
   }
 
@@ -95,4 +104,20 @@ export class Bomberman extends Player {
     this.#destroyKeyboardConnection();
     this.#destroyGamepadConnection();
   }
+
+  setBombPass(_value: boolean) {
+    this.sprite.scene.physics.world.colliders
+      .getActive()
+      .filter(c => c.name === 'playerBombsCollision')
+      .forEach(c => c.destroy());
+  }
+
+  setWallPass(_value: boolean) {
+    this.sprite.scene.physics.world.colliders
+      .getActive()
+      .filter(c => c.name === 'playerBrickCollision')
+      .forEach(c => c.destroy());
+  }
+
+  setFlamePass(_value: boolean) {}
 }

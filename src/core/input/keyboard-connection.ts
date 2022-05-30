@@ -11,7 +11,7 @@ const Keys: Record<string, Buttons> = {
   Left: Buttons.Left,
   Right: Buttons.Right,
   x: Buttons.A,
-  c: Buttons.B,
+  z: Buttons.B,
   Enter: Buttons.Start,
 };
 
