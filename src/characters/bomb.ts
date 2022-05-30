@@ -1,25 +1,21 @@
-import { Player } from '../core/player/player';
+import { Player2 } from '../core/player/player';
 import { Bomberman } from './bomberman';
 import { Fire } from './fire';
 import { GameScene } from '../scenes/game';
 import { getMapTilePosition } from '../utils/map';
+import { Scene } from 'phaser';
 
 const frameRate = 3;
 
-export class Bomb extends Player {
+export class Bomb extends Player2 {
   static playerName = 'bomb';
 
   #player: Bomberman;
 
-  constructor(
-    group: Phaser.Physics.Arcade.Group,
-    player: Bomberman,
-    tileX: number,
-    tileY: number,
-  ) {
+  constructor(scene: Scene, player: Bomberman, tileX: number, tileY: number) {
     super(
+      scene,
       Bomb.playerName,
-      group.get(),
       tileX,
       tileY,
       [
@@ -31,7 +27,7 @@ export class Bomb extends Player {
       true,
     );
     this.#player = player;
-    this.sprite.setDepth(1);
+    this.setDepth(1);
 
     if (!player.detonator) {
       setTimeout(() => {
@@ -41,19 +37,19 @@ export class Bomb extends Player {
   }
 
   detonate() {
-    if (!this.sprite.anims || this.sprite.anims.getName() === 'death') {
+    if (!this.anims || this.anims.getName() === 'death') {
       return;
     }
 
-    const scene = this.sprite.scene as GameScene;
-    this.sprite.anims.play('death');
+    const scene = this.scene as GameScene;
+    this.anims.play('death');
     this.kill();
-    const tile = getMapTilePosition(this.sprite.getCenter());
+    const tile = getMapTilePosition(this.getCenter());
     new Fire(scene, tile, this.#player.fireLength);
   }
 
   kill() {
     super.kill();
-    this.sprite.anims?.complete();
+    this.anims?.complete();
   }
 }

@@ -179,7 +179,7 @@ export class Fire {
       .forEach(b => {
         const player = b.gameObject.getData('player');
         if (b.gameObject.name === Bomb.playerName) {
-          (player as Bomb)?.detonate();
+          (b.gameObject as Bomb)?.detonate();
         } else if (
           b.gameObject.name !== Fire.playerName &&
           (!(b.gameObject instanceof Bomberman) || !b.gameObject.flamePass)
