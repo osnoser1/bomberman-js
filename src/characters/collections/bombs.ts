@@ -6,18 +6,19 @@ export class Bombs {
   group: Phaser.Physics.Arcade.Group;
 
   constructor(scene: GameScene) {
-    this.group = scene.physics.add.group({ defaultKey: Bomb.playerName });
+    this.group = scene.physics.add.group({
+      defaultKey: Bomb.playerName,
+      immovable: true,
+    });
   }
 
   addBomb(player: Bomberman, tileX: number, tileY: number) {
-    new Bomb(this.group, player, tileX, tileY);
+    const bomb = new Bomb(this.group.scene, player, tileX, tileY);
+    this.group.add(bomb);
   }
 
   detonate() {
-    const bomb: Bomb | undefined = this.group
-      .getChildren()
-      .at(0)
-      ?.getData('player');
+    const bomb = this.group.getChildren().at(0) as Bomb | undefined;
     bomb?.detonate();
   }
 }

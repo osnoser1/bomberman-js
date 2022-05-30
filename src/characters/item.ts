@@ -1,5 +1,6 @@
 import { Player, Speed } from '../core/player/player';
 import { Bomberman } from './bomberman';
+import { Scene } from 'phaser';
 
 export const ItemType = {
   FireUp: 'fire-up',
@@ -31,14 +32,14 @@ export class Item extends Player {
   static readonly playerName = 'item';
 
   constructor(
-    sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
+    scene: Scene,
     public itemType: ItemTypeValue,
     tileX: number,
     tileY: number,
   ) {
     super(
+      scene,
       Item.playerName,
-      sprite,
       tileX,
       tileY,
       [
@@ -54,7 +55,6 @@ export class Item extends Player {
       ],
       9,
       1,
-      false,
       itemType,
     );
   }

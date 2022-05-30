@@ -1,19 +1,19 @@
 import { Player } from '../core/player/player';
 import { RandomMovement } from '../movement/random-movement';
-import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+import { GameScene } from '../scenes/game';
 
 const frameRate = 5;
 
 export abstract class Enemy extends Player {
   protected constructor(
+    scene: GameScene,
     name: string,
-    sprite: SpriteWithDynamicBody,
     tileX: number,
     tileY: number,
   ) {
     super(
+      scene,
       name,
-      sprite,
       tileX,
       tileY,
       [
@@ -29,8 +29,8 @@ export abstract class Enemy extends Player {
     );
 
     this.movement = new RandomMovement(this);
-    this.sprite.setDepth(2);
-    this.sprite.setBounce(1, 1);
+    this.setDepth(2);
+    this.setBounce(1, 1);
   }
 
   kill() {

@@ -6,7 +6,6 @@ import { TileMap } from '../core/map/tile-map';
 import { Input } from '../core/input/gamepad';
 import { keyboardConnection } from '../core/input/keyboard-connection';
 import { joystickConnection } from '../core/input/joystick';
-import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 import Buttons = Input.Buttons;
 
 const frameRate = 6;
@@ -31,15 +30,10 @@ export class Bomberman extends Player {
   readonly #destroyKeyboardConnection: () => void;
   readonly #destroyGamepadConnection: () => void;
 
-  constructor(
-    sprite: SpriteWithDynamicBody,
-    scene: GameScene,
-    tileX: number,
-    tileY: number,
-  ) {
+  constructor(scene: GameScene, tileX: number, tileY: number) {
     super(
+      scene,
       Bomberman.playerName,
-      sprite,
       tileX,
       tileY,
       [
@@ -61,7 +55,7 @@ export class Bomberman extends Player {
     this.bombLength = 1;
     this.flamePass = false;
 
-    this.sprite.setDepth(3);
+    this.setDepth(3);
     this.#destroyKeyboardConnection = keyboardConnection(
       scene.input.keyboard,
       this as any,
@@ -76,10 +70,10 @@ export class Bomberman extends Player {
     if (
       this.gamepad.isPressed(Buttons.A) &&
       this.bombs.group.getLength() < this.bombLength &&
-      !physics.overlap(this.sprite, this.bombs.group) &&
-      !physics.overlap(this.sprite, tileMap.bricks.group)
+      !physics.overlap(this, this.bombs.group) &&
+      !physics.overlap(this, tileMap.bricks.group)
     ) {
-      const center = this.sprite.getCenter();
+      const center = this.getCenter();
       const { x: tileX, y: tileY } = getMapTilePosition(center);
       this.bombs.addBomb(this, tileX, tileY);
     }
@@ -90,15 +84,14 @@ export class Bomberman extends Player {
     }
   }
 
-  // @ts-ignore
-  update(
-    _time: number,
-    _delta: number,
-    physics: Phaser.Physics.Arcade.ArcadePhysics,
-    tileMap: TileMap,
-  ) {
+  update(_time: number, _delta: number) {
     super.update(_time, _delta);
-    this.#updateActions(physics, tileMap);
+    if (this.anims) {
+      this.#updateActions(
+        this.scene.physics,
+        (this.scene as GameScene).tileMap,
+      );
+    }
   }
 
   kill() {
@@ -108,14 +101,14 @@ export class Bomberman extends Player {
   }
 
   setBombPass(_value: boolean) {
-    this.sprite.scene.physics.world.colliders
+    this.scene.physics.world.colliders
       .getActive()
       .filter(c => c.name === 'playerBombsCollision')
       .forEach(c => c.destroy());
   }
 
   setWallPass(_value: boolean) {
-    this.sprite.scene.physics.world.colliders
+    this.scene.physics.world.colliders
       .getActive()
       .filter(c => c.name === 'playerBrickCollision')
       .forEach(c => c.destroy());

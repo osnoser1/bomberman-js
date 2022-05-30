@@ -9,7 +9,10 @@ export class Bricks {
   itemsGroup: Phaser.Physics.Arcade.Group;
 
   constructor(scene: GameScene) {
-    this.group = scene.physics.add.group({ defaultKey: Brick.playerName });
+    this.group = scene.physics.add.group({
+      defaultKey: Brick.playerName,
+      immovable: true,
+    });
     this.itemsGroup = scene.physics.add.group({ defaultKey: Item.playerName });
   }
 
@@ -24,7 +27,14 @@ export class Bricks {
       const itemType = itemTypeValues[random(itemTypeValues.length - 2)];
       // TODO: modify this condition to generate only one power-up
       const item = itemIndex === i ? ItemType.Door : itemType;
-      new Brick(this.group, this.itemsGroup, b.x, b.y, item);
+      const brick = new Brick(
+        this.group.scene,
+        this.itemsGroup,
+        b.x,
+        b.y,
+        item,
+      );
+      this.group.add(brick, true);
     });
   }
 }

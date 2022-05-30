@@ -1,4 +1,3 @@
-import SpriteWithDynamicBody = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 import Gamepad = Input.Gamepad;
 import Buttons = Input.Buttons;
 import { Config } from '../../config';
@@ -10,6 +9,8 @@ import {
 import { Input } from '../input/gamepad';
 import { getMapTilePosition } from '../../utils/map';
 import { isEven } from '../../utils/math';
+import { Scene } from 'phaser';
+import Sprite = Phaser.Physics.Arcade.Sprite;
 
 export enum Speed {
   Slowest = 1,
@@ -28,15 +29,15 @@ const AxisToDimension = {
   y: 'height',
 } as const;
 
-export abstract class Player {
+export class Player extends Sprite {
   protected movement?: RandomMovement;
   movementType?: RandomMovementType;
   gamepad: Gamepad;
   speed!: Speed;
 
-  protected constructor(
-    public readonly name: string,
-    public sprite: SpriteWithDynamicBody,
+  constructor(
+    scene: Scene,
+    name: string,
     tileX: number,
     tileY: number,
     animations: {
@@ -47,48 +48,57 @@ export abstract class Player {
     }[],
     numberOfSpriteColumns: number,
     frameRate: number,
-    immovable = false,
     initialState = 'initial',
   ) {
+    super(scene, 0, 0, name);
+
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+
     this.gamepad = new Gamepad();
-    this.sprite.name = this.name;
-    this.sprite.setData('player', this);
-    this.sprite.setOrigin(0, 0);
-    this.sprite.setPosition(
+    this.name = name;
+    this.setOrigin(0, 0);
+    this.setPosition(
       tileX * Config.graphics.tile.width,
       tileY * Config.graphics.tile.height,
     );
 
-    this.sprite.setImmovable(immovable);
-    this.sprite.setScale(2.5);
+    this.setScale(2.5);
 
     addAnimationToElement(
       this.name,
       animations,
-      this.sprite.anims,
+      this.anims,
       numberOfSpriteColumns,
       frameRate,
     );
-    this.sprite.anims.play(initialState);
+    this.anims.play(initialState);
 
     this.gamepad.addListener('change', this.#updateAnimation, this);
+
+    scene.events.on('update', this.update, this);
   }
 
   update(_time: number, _delta: number) {
-    this.#updateMovement();
+    super.update(_time, _delta);
+    if (this.anims) {
+      this.#updateMovement();
+    }
   }
 
   kill() {
-    if (!this.sprite.anims.exists('death')) {
-      this.sprite.destroy();
+    if (!this.anims.exists('death')) {
+      this.scene.events.off('update', this.update, this);
+      this.destroy();
       return;
     }
 
-    this.sprite.anims.play('death');
+    this.anims.play('death');
 
-    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () =>
-      this.sprite.destroy(),
-    );
+    this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.scene?.events.off('update', this.update, this);
+      this.destroy();
+    });
   }
 
   startMovement() {
@@ -96,44 +106,44 @@ export abstract class Player {
   }
 
   #updateAnimation(gamepad: Gamepad) {
-    if (this.sprite.anims.getName() === 'death') {
+    if (this.anims.getName() === 'death') {
       return;
     }
 
     if (gamepad.isPressed(Buttons.Right)) {
-      this.sprite.anims.play('right', true);
+      this.anims.play('right', true);
     } else if (gamepad.isPressed(Buttons.Left)) {
-      this.sprite.anims.play('left', true);
+      this.anims.play('left', true);
     } else if (gamepad.isPressed(Buttons.Up)) {
-      this.sprite.anims.play('up', true);
+      this.anims.play('up', true);
     } else if (gamepad.isPressed(Buttons.Down)) {
-      this.sprite.anims.play('down', true);
+      this.anims.play('down', true);
     } else {
-      this.sprite.anims.pause();
+      this.anims.pause();
     }
   }
 
   #updateMovement() {
-    if (this.sprite.anims.getName() === 'death') {
-      this.sprite.setVelocity(0, 0);
+    if (this.anims.getName() === 'death') {
+      this.setVelocity(0, 0);
       return;
     }
 
     const velocity = this.speed * 30;
     if (this.gamepad.isPressed(Buttons.Up)) {
-      this.sprite.setVelocityY(-velocity);
+      this.setVelocityY(-velocity);
     } else if (this.gamepad.isPressed(Buttons.Down)) {
-      this.sprite.setVelocityY(velocity);
+      this.setVelocityY(velocity);
     } else {
-      this.sprite.setVelocityY(0);
+      this.setVelocityY(0);
     }
 
     if (this.gamepad.isPressed(Buttons.Right)) {
-      this.sprite.setVelocityX(velocity);
+      this.setVelocityX(velocity);
     } else if (this.gamepad.isPressed(Buttons.Left)) {
-      this.sprite.setVelocityX(-velocity);
+      this.setVelocityX(-velocity);
     } else {
-      this.sprite.setVelocityX(0);
+      this.setVelocityX(0);
     }
 
     if (this.gamepad.isPressed(Buttons.Right, Buttons.Left)) {
@@ -150,7 +160,7 @@ export abstract class Player {
       return;
     }
 
-    const center = this.sprite.getCenter();
+    const center = this.getCenter();
     const tileModule =
       center[axis] % Config.graphics.tile[AxisToDimension[axis]];
     const tilePosition = getMapTilePosition(center);
@@ -159,11 +169,11 @@ export abstract class Player {
     }
 
     if (tileModule >= 6 && tileModule < 20) {
-      this.sprite.body.velocity[axis] = velocity;
+      this.body.velocity[axis] = velocity;
     } else if (tileModule > 20 && tileModule < 34) {
-      this.sprite.body.velocity[axis] = -velocity;
+      this.body.velocity[axis] = -velocity;
     } else {
-      this.sprite.body.velocity[axis] = 0;
+      this.body.velocity[axis] = 0;
     }
   }
 }

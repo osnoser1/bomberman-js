@@ -9,15 +9,15 @@ export class Brick extends Player {
   readonly #itemType?: ItemTypeValue;
 
   constructor(
-    group: Phaser.Physics.Arcade.Group,
+    scene: Phaser.Scene,
     itemGroup: Phaser.Physics.Arcade.Group,
     tileX: number,
     tileY: number,
     hasItem: ItemTypeValue | undefined,
   ) {
     super(
+      scene,
       Brick.playerName,
-      group.get(),
       tileX,
       tileY,
       [
@@ -26,7 +26,6 @@ export class Brick extends Player {
       ],
       6,
       frameRate,
-      true,
     );
 
     this.#itemType = hasItem;
@@ -42,8 +41,9 @@ export class Brick extends Player {
       return;
     }
 
-    this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      new Item(itemGroup.get(), this.#itemType!, tileX, tileY);
+    this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      const item = new Item(itemGroup.scene, this.#itemType!, tileX, tileY);
+      itemGroup.add(item);
     });
   }
 }
