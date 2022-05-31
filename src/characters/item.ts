@@ -20,7 +20,7 @@ const skillAction: Record<ItemTypeValue, (player: Bomberman) => void> = {
   [ItemType.RemoteControl]: player => (player.detonator = true),
   [ItemType.SpeedUp]: player => (player.speed = Speed.Fast),
   [ItemType.BombPass]: player => player.setBombPass(true),
-  [ItemType.WallPass]: player => player.setWallPass(true),
+  [ItemType.WallPass]: player => (player.wallPass = true),
   [ItemType.FlamePass]: player => (player.flamePass = true),
   [ItemType.Invincible]: () => {},
   [ItemType.Door]: () => {},

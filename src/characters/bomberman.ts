@@ -7,6 +7,7 @@ import { Input } from '../core/input/gamepad';
 import { keyboardConnection } from '../core/input/keyboard-connection';
 import { joystickConnection } from '../core/input/joystick';
 import Buttons = Input.Buttons;
+import Collider = Phaser.Physics.Arcade.Collider;
 
 const frameRate = 6;
 
@@ -63,6 +64,15 @@ export class Bomberman extends Player {
     this.#destroyGamepadConnection = joystickConnection(this as any);
   }
 
+  set wallPass(wallPass: boolean) {
+    const collider: Collider | undefined = this.getData('brickCollision');
+    if (!collider) {
+      throw new Error('collider is not defined');
+    }
+
+    collider.active = !wallPass;
+  }
+
   #updateActions(
     physics: Phaser.Physics.Arcade.ArcadePhysics,
     tileMap: TileMap,
@@ -104,13 +114,6 @@ export class Bomberman extends Player {
     this.scene.physics.world.colliders
       .getActive()
       .filter(c => c.name === 'playerBombsCollision')
-      .forEach(c => c.destroy());
-  }
-
-  setWallPass(_value: boolean) {
-    this.scene.physics.world.colliders
-      .getActive()
-      .filter(c => c.name === 'playerBrickCollision')
       .forEach(c => c.destroy());
   }
 }

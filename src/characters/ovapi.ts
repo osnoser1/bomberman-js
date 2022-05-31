@@ -6,7 +6,7 @@ import { GameScene } from '../scenes/game';
 @enemy({ type: EnemyType.OVAPI })
 export class Ovapi extends Enemy {
   constructor(scene: GameScene, tileX: number, tileY: number) {
-    super(scene, 'ovapi', tileX, tileY);
+    super(scene, 'ovapi', tileX, tileY, true);
 
     this.speed = Speed.Slowest;
   }

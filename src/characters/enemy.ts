@@ -1,6 +1,7 @@
 import { Player } from '../core/player/player';
 import { RandomMovement } from '../movement/random-movement';
 import { GameScene } from '../scenes/game';
+import Collider = Phaser.Physics.Arcade.Collider;
 
 const frameRate = 5;
 
@@ -10,6 +11,7 @@ export abstract class Enemy extends Player {
     name: string,
     tileX: number,
     tileY: number,
+    protected wallPass: boolean = false,
   ) {
     super(
       scene,
@@ -36,5 +38,14 @@ export abstract class Enemy extends Player {
   kill() {
     super.kill();
     this.movement?.stop();
+  }
+
+  applyWallPass() {
+    const collider: Collider | undefined = this.getData('brickCollision');
+    if (!collider) {
+      throw new Error('collider is not defined');
+    }
+
+    collider.active = !this.wallPass;
   }
 }

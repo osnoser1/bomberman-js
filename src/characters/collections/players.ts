@@ -29,22 +29,22 @@ export class Players {
       bomberman.bombs.group,
       scene.tileMap.itemTileSetLayer,
     );
-    // TODO: improve to handle multiple players
-    scene.physics.add
-      .collider(bomberman, scene.tileMap.bricks.group)
-      .setName(`playerBrickCollision`);
-    scene.physics.add.collider(bomberman.bombs.group, allBombs);
-    scene.physics.add
-      .collider(bomberman, allBombs)
-      .setName(`playerBombsCollision`);
-    scene.physics.add.collider(scene.tileMap.enemies.group, [
-      bomberman.bombs.group,
+    const brickCollision = scene.physics.add.collider(
+      bomberman,
       scene.tileMap.bricks.group,
-    ]);
+    );
+    bomberman.setData('brickCollision', brickCollision);
+
+    scene.physics.add.collider(bomberman.bombs.group, allBombs);
+
+    const bombCollision = scene.physics.add.collider(bomberman, allBombs);
+    bomberman.setData('bombCollision', bombCollision);
+
     scene.physics.add.collider(
       scene.tileMap.enemies.group,
-      scene.tileMap.itemTileSetLayer,
+      bomberman.bombs.group,
     );
+
     scene.cameras.main.startFollow(bomberman, true);
   }
 

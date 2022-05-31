@@ -6,7 +6,7 @@ import { GameScene } from '../scenes/game';
 @enemy({ type: EnemyType.PONTAN })
 export class Pontan extends Enemy {
   constructor(scene: GameScene, tileX: number, tileY: number) {
-    super(scene, 'pontan', tileX, tileY);
+    super(scene, 'pontan', tileX, tileY, true);
 
     this.speed = Speed.Mid;
   }

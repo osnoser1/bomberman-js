@@ -6,7 +6,7 @@ import { GameScene } from '../scenes/game';
 @enemy({ type: EnemyType.KONDORIA })
 export class Kondoria extends Enemy {
   constructor(scene: GameScene, tileX: number, tileY: number) {
-    super(scene, 'kondoria', tileX, tileY);
+    super(scene, 'kondoria', tileX, tileY, true);
 
     this.speed = Speed.Slowest;
   }
